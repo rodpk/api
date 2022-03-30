@@ -1,5 +1,9 @@
 package br.com.rodpk.api.resources;
 
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,4 +33,10 @@ public class UserResource {
         return ResponseEntity.ok().body(mapper.map(service.findById(id), UserDTO.class));
     }
     
+
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> findAll() {
+        List<UserDTO> listDTO = service.findAll().stream().map(u -> mapper.map(u, UserDTO.class)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDTO);
+    }
 }
