@@ -14,14 +14,11 @@ import br.com.rodpk.api.exceptions.ObjectNotFoundException;
 import br.com.rodpk.api.repositories.UserRepository;
 import br.com.rodpk.api.services.UserService;
 
-
 @Service
 public class UserServiceImpl implements UserService {
 
-
     @Autowired
     private UserRepository repository;
-
 
     @Autowired
     private ModelMapper mapper;
@@ -45,8 +42,14 @@ public class UserServiceImpl implements UserService {
 
     private void findByEmail(UserDTO dto) {
         Optional<User> user = repository.findByEmail(dto.getEmail());
-        if(user.isPresent())
+        if (user.isPresent() && !user.get().getId().equals(dto.getId()))
             throw new DataIntegrityViolationException("Email já cadastrado no sistema");
     }
-    
+
+    @Override
+    public User update(UserDTO dto) {
+        findByEmail(dto);
+        return repository.save(mapper.map(dto, User.class));
+    }
+
 }
