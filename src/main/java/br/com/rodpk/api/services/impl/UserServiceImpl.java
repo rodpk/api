@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.rodpk.api.domain.User;
 import br.com.rodpk.api.domain.dto.UserDTO;
+import br.com.rodpk.api.exceptions.DataIntegrityViolationException;
 import br.com.rodpk.api.exceptions.ObjectNotFoundException;
 import br.com.rodpk.api.repositories.UserRepository;
 import br.com.rodpk.api.services.UserService;
@@ -38,8 +39,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDTO dto) {
-        
+        findByEmail(dto);
         return repository.save(mapper.map(dto, User.class));
+    }
+
+    private void findByEmail(UserDTO dto) {
+        Optional<User> user = repository.findByEmail(dto.getEmail());
+        if(user.isPresent())
+            throw new DataIntegrityViolationException("Email já cadastrado no sistema");
     }
     
 }
