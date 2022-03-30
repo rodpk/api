@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import br.com.rodpk.api.domain.User;
 import br.com.rodpk.api.domain.dto.UserDTO;
+import br.com.rodpk.api.exceptions.ObjectNotFoundException;
 import br.com.rodpk.api.repositories.UserRepository;
 
 
@@ -61,6 +62,17 @@ public class UserServiceImplTest {
         assertEquals(EMAIL, response.getEmail());
     }
 
+    @Test
+    void whenFindByIdThenReturnObjectNotFoundException() {
+        when(repository.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+
+        try {
+            service.findById(ID);
+        } catch(Exception ex) {
+            assertEquals(ObjectNotFoundException.class, ex.getClass());
+            assertEquals("Objeto não encontrado", ex.getMessage());
+        }
+    }
     @Test
     void findAll() {
 
