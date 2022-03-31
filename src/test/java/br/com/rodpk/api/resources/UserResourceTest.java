@@ -21,12 +21,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import br.com.rodpk.api.domain.User;
 import br.com.rodpk.api.domain.dto.UserDTO;
 import br.com.rodpk.api.services.UserService;
-import net.bytebuddy.agent.VirtualMachine.ForHotSpot.Connection.Response;
 
 @SpringBootTest
 public class UserResourceTest {
@@ -41,9 +39,7 @@ public class UserResourceTest {
     private User user;
     private UserDTO userDTO;
 
-    private static final String EMAIL_JA_CADASTRADO_NO_SISTEMA = "Email já cadastrado no sistema";
     private static final int INDEX = 0;
-    private static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
     private static final String PASSWORD = "123";
     private static final String EMAIL = "elizabeth@gmail.com";
     private static final Integer ID = 1;
