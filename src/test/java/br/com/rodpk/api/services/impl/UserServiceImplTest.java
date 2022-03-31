@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -29,6 +32,7 @@ import br.com.rodpk.api.repositories.UserRepository;
 public class UserServiceImplTest {
 
 
+    private static final String EMAIL_JA_CADASTRADO_NO_SISTEMA = "Email já cadastrado no sistema";
     private static final int INDEX = 0;
     private static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
     private static final String PASSWORD = "123";
@@ -116,18 +120,43 @@ public class UserServiceImplTest {
             service.create(userDTO);
         } catch(Exception ex) {
             assertEquals(DataIntegrityViolationException.class, ex.getClass());
-            assertEquals("Email já cadastrado no sistema", ex.getMessage());
+            assertEquals(EMAIL_JA_CADASTRADO_NO_SISTEMA, ex.getMessage());
         }
     }
     
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSuccess() {
+        when(repository.save(any())).thenReturn(user);
+        User response = service.update(userDTO);
 
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PASSWORD, response.getPassword());
     }
 
     @Test
-    void delete() {
+    void whenUpdateThenReturnAnDataIntegrityViolationException() {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try {
+            optionalUser.get().setId(2);
+            service.create(userDTO);
+        } catch(Exception ex) {
+            assertEquals(DataIntegrityViolationException.class, ex.getClass());
+            assertEquals(EMAIL_JA_CADASTRADO_NO_SISTEMA, ex.getMessage());
+        }
+    }
+
+    @Test
+    void deleteWithSuccess() {
+        when(repository.findById(anyInt())).thenReturn(optionalUser);
+        doNothing().when(repository).deleteById(anyInt());
+        service.delete(ID);
+        verify(repository, times(1)).deleteById(anyInt()); // verifica quantas vezes foi chamado o metodo;
 
     }
 
